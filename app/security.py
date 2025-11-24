@@ -4,14 +4,16 @@ import base64
 
 try:
     from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
 except ImportError:
     print("[!] Error: 'cryptography' is missing. Run 'uv add cryptography'")
     sys.exit(1)
 
-# Constants
-KDF_ITERATIONS = 600000
+# --- ARGON2 CONFIGURATION ---
+MEMORY_COST = 65536
+TIME_COST = 4
+PARALLELISM = 2
+
 SALT_SIZE = 16
 NONCE_SIZE = 12
 KEY_LENGTH = 32
@@ -19,20 +21,24 @@ KEY_LENGTH = 32
 class SecurityManager:
     @staticmethod
     def generate_salt():
-        """Generates a random salt for KDF."""
+        """Generates a random salt."""
         return os.urandom(SALT_SIZE)
 
     @staticmethod
     def derive_key(master_password: str, secret_key: str, salt: bytes) -> bytes:
         """
-        Derives a 32-byte AES key using PBKDF2-HMAC-SHA256.
+        Derives a 32-byte AES key using Argon2id.
         """
-        kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=KEY_LENGTH,
+        kdf = Argon2id(
             salt=salt,
-            iterations=KDF_ITERATIONS,
+            length=KEY_LENGTH,
+            iterations=TIME_COST,
+            lanes=PARALLELISM,
+            memory_cost=MEMORY_COST,
+            ad=None,
+            secret=None
         )
+
         combined = (master_password + secret_key).encode('utf-8')
         return kdf.derive(combined)
 

@@ -9,9 +9,6 @@ This app serves as a technical showcase of applied cryptography, focusing on zer
 
 > **Note:** This is a portfolio project demonstrating security concepts.
 
-## Known Issues / Future Improvements
-* **CKEditor 4 Warning:** This project uses `Flask-CKEditor`, which relies on the End-of-Life CKEditor 4. In a production environment, I would migrate this to a modern frontend framework (React/Vue) with CKEditor 5 or utilize a Markdown editor like `SimpleMDE` to ensure long-term security compliance.
-
 ## Key Features
 
 * **Zero-Knowledge Encryption:** Uses `AES-256-GCM` to ensure data integrity. The database only ever stores encrypted blobs.
@@ -24,7 +21,7 @@ This app serves as a technical showcase of applied cryptography, focusing on zer
 ## Tech Stack
 
 * **Backend:** Python
-* **Security:** Cryptography (PBKDF2HMAC, AESGCM), Secrets module
+* **Security:** Cryptography (Argon2id, AESGCM), Secrets module
 * **Database:** SQLite
 * **Utilities:** Pyperclip (Clipboard), UV (Package Management)
 * **Build:** PyInstaller
@@ -52,7 +49,9 @@ flowchart TD
     
     subgraph Key_Derivation [Derivation Process]
         Salt[(Random Salt)]
-        MP & SK & Salt -->|PBKDF2-HMAC-SHA256| DK[Derived AES-256 Key]
+        MP & SK & Salt -->|Argon2id (Memory Hard)| DK[Derived AES-256 Key]
+        
+        note[Params: 64MB RAM, 4 Passes, 2 Lanes] -.-> Key_Derivation
     end
 
     subgraph Encryption_Process [Storage]
