@@ -8,7 +8,7 @@ def get_base_dir():
         return Path(sys.executable).parent
     else:
         # If run as a script, use the location of the script
-        return Path(__file__).resolve().parent
+        return Path(__file__).resolve().parent.parent
 
 BASE_DIR = get_base_dir()
 DATA_DIR = BASE_DIR / "data"

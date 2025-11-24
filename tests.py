@@ -1,14 +1,11 @@
 import unittest
-import os
-import json
 import shutil
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-# Import your application modules
-from security import SecurityManager
-from storage import StorageManager
+from app.security import SecurityManager
+from app.storage import StorageManager
 from cryptography.exceptions import InvalidTag
 
 

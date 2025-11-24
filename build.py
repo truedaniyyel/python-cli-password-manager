@@ -6,8 +6,8 @@ import platform
 # Configuration
 APP_NAME = "cooking"
 MAIN_FILE = "main.py"
-ICON_WIN = "app-win.ico"
-ICON_MAC = "app-mac.icns"
+ICON_WIN = os.path.join("assets", "app-win.ico")
+ICON_MAC = os.path.join("assets", "app-mac.icns")
 
 
 def build():

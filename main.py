@@ -1,4 +1,4 @@
-from controller import VaultController
+from app.controller import VaultController
 
 def main():
     try:
