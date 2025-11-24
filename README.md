@@ -1,61 +1,66 @@
 # Python CLI Password Manager
 
 ![Python](https://img.shields.io/badge/Python-3.14%2B-blue)
+![Cryptography](https://img.shields.io/badge/Cryptography-AES--GCM-red)
+![SQLite](https://img.shields.io/badge/SQLite-Local-green)
+![Build](https://img.shields.io/badge/PyInstaller-Executable-purple)
 
 This app serves as a technical showcase of applied cryptography, focusing on zero-knowledge architecture where secrets are encrypted before they ever touch the database.
 
-> **Note:** This is a portfolio project. For my active personal blog, please visit [Daniel Adrian's site](https://truedaniyyel.com).
+> **Note:** This is a portfolio project demonstrating security concepts.
 
 ## Known Issues / Future Improvements
 * **CKEditor 4 Warning:** This project uses `Flask-CKEditor`, which relies on the End-of-Life CKEditor 4. In a production environment, I would migrate this to a modern frontend framework (React/Vue) with CKEditor 5 or utilize a Markdown editor like `SimpleMDE` to ensure long-term security compliance.
 
 ## Key Features
 
-* **User Authentication:** Login and registration using `Werkzeug` (pbkdf2:sha256 with salting) and `Flask-Login` for session management.
-* **Role-Based Access Control:** Custom decorators (`@admin_only`) ensure only the administrator can Create, Edit, or Delete posts.
-* **Database Relationships:** `One-to-Many` relationships linking **Users**, **Blog Posts**, and **Comments** via `SQLAlchemy`.
-* **Rich Text Editor:** `CKEditor` for formatting blog posts.
-* **Security:** `Bleach` implementation to sanitize comments and prevent XSS attacks. 
-* **Dynamic UI:** Responsive design using `Bootstrap 5` and `Jinja2` templating.
-* **Gravatar Support:** auto-generated user avatars.
+* **Zero-Knowledge Encryption:** Uses `AES-256-GCM` to ensure data integrity. The database only ever stores encrypted blobs.
+* **Two-Factor Key Derivation:** Security relies on both a user-chosen **Master Password** and a system-generated **Secret Key**, making rainbow table attacks significantly harder.
+* **Clipboard:** Passwords are copied to the clipboard and automatically cleared after 60 seconds.
+* **Search:** Quickly filter entries by Website or Username.
+* **Cross-Platform:** Includes a build script to generate standalone executables for Windows, macOS, and Linux.
+* **Testing:** Includes unit tests that validate cryptographic math and database transactions.
 
 ## Tech Stack
 
-* **Backend:** Python, Flask
-* **Database:** SQLite, SQLAlchemy
-* **Frontend:** HTML5, CSS3, Bootstrap 5, Jinja2
-* **Forms:** WTForms, Flask-WTF
+* **Backend:** Python
+* **Security:** Cryptography (PBKDF2HMAC, AESGCM), Secrets module
+* **Database:** SQLite
+* **Utilities:** Pyperclip (Clipboard), UV (Package Management)
+* **Build:** PyInstaller
 
-## Database Schema
+## Software Architecture (MVC)
 ```mermaid
-erDiagram
-    User ||--o{ BlogPost : "writes"
-    User ||--o{ Comment : "writes"
-    BlogPost ||--o{ Comment : "has"
+graph TD
+    Main(main.py) -->|Initializes| Controller(VaultController)
+    
+    subgraph MVC_Pattern [MVC Structure]
+        direction TB
+        Controller <-->|User IO| View(VaultView)
+        Controller -->|CRUD Ops| Storage(StorageManager)
+        Controller -->|Crypto Logic| Security(SecurityManager)
+    end
+    
+    Storage -->|Persist| DB[(vault.db)]
+```
 
-    User {
-        int id PK
-        string name
-        string email
-        string password
-    }
+## Security Architecture
+```mermaid
+flowchart TD
+    User([User]) -->|Inputs| MP[Master Password]
+    User -->|Inputs| SK[Secret Key]
+    
+    subgraph Key_Derivation [Derivation Process]
+        Salt[(Random Salt)]
+        MP & SK & Salt -->|PBKDF2-HMAC-SHA256| DK[Derived AES-256 Key]
+    end
 
-    BlogPost {
-        int id PK
-        int author_id FK
-        string title
-        string subtitle
-        string date
-        text body
-        string img_url
-    }
+    subgraph Encryption_Process [Storage]
+        Data[Raw Password JSON] -->|AES-GCM| Encrypted[Nonce + Ciphertext]
+        Encrypted --> DB[(SQLite Vault.db)]
+    end
 
-    Comment {
-        int id PK
-        text text
-        int author_id FK
-        int post_id FK
-    }
+    DK --> Encryption_Process
 ```
 
 ## How to Run Locally
@@ -63,36 +68,43 @@ erDiagram
 
 ### 1. Clone the repository
 ```bash
-git clone [https://github.com/truedaniyyel/python-blog.git](https://github.com/truedaniyyel/python-blog.git)
-cd python-blog
+git clone [https://github.com/truedaniyyel/python-cli-password-manager.git](https://github.com/truedaniyyel/python-cli-password-manager.git)
+cd python-cli-password-manager
 ```
 
 ### 2. Install Dependencies
+This project uses uv for modern package management.
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
-### 3. Configure Environment Variables
-Create a .env file in the project root directory and add your secret key:
-```
-FLASK_KEY=your_flask_key_here
-DB_URI=your_db_uri_here
-```
-
-### 4. Run the Application
+### 3. First Time Setup
+Run the application to initialize the vault.
 ```bash
 python main.py
 ```
+You will be prompted to create a Master Password. The app will then generate a Secret Key, which you must save immediately.
 
-## Deployment & Production
-You can run this project on platforms like Render, Railway, or Heroku.
+### 4. Run Tests
+```bash
+python tests.py
+```
 
-### 1. WSGI Server
-While `main.py` uses the default Flask development server, production environments should use a production-grade WSGI server.
-* **Linux/Mac (Render/Heroku):** `gunicorn`
-* **Windows:** `waitress`
+## Build & Distribution
+You can bundle this project into a standalone executable (.exe) so Python is not required on the target machine.
 
-### 2. Database Migration (PostgreSQL)
-The application is currently configured to use **SQLite** for local development. To switch to **PostgreSQL** for production:
-1. Install the adapter: `pip install psycopg2-binary`
-2. Follow the hosting platform's instructions to configure the database connection variables.
+### 1. Install PyInstaller
+```bash
+uv add --dev pyinstaller
+```
+
+### 2. Run Build Script
+The included build.py handles OS detection (Windows/Mac/Linux) and icon embedding.
+```bash
+python build.py
+```
+
+### 3. Output
+The standalone file will be generated in the dist/ folder.
+* **Windows:** `dist/cooking.exe`
+* **macOS:** `dist/cooking`
