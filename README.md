@@ -49,10 +49,11 @@ flowchart TD
     
     subgraph Key_Derivation [Derivation Process]
         Salt[(Random Salt)]
-        %% The fix is here: Add quotes around the text inside the pipes
+        %% 1. Added quotes to "Argon2id..." to prevent special character errors
         MP & SK & Salt -->|"Argon2id (Memory Hard)"| DK[Derived AES-256 Key]
         
-        note[Params: 64MB RAM, 4 Passes, 2 Lanes] -.-> Key_Derivation
+        %% 2. Fixed Cycle Error: Point to 'DK' (the node) instead of 'Key_Derivation' (the group)
+        note[Params: 64MB RAM, 4 Passes, 2 Lanes] -.-> DK
     end
 
     subgraph Encryption_Process [Storage]
