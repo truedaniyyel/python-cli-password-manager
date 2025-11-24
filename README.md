@@ -49,7 +49,8 @@ flowchart TD
     
     subgraph Key_Derivation [Derivation Process]
         Salt[(Random Salt)]
-        MP & SK & Salt -->|Argon2id (Memory Hard)| DK[Derived AES-256 Key]
+        %% The fix is here: Add quotes around the text inside the pipes
+        MP & SK & Salt -->|"Argon2id (Memory Hard)"| DK[Derived AES-256 Key]
         
         note[Params: 64MB RAM, 4 Passes, 2 Lanes] -.-> Key_Derivation
     end
