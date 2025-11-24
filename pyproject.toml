@@ -1,0 +1,15 @@
+[project]
+name = "python-password-manager"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.14"
+dependencies = [
+    "cryptography>=46.0.3",
+    "pyperclip>=1.11.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.16.0",
+]
+
