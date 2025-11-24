@@ -5,7 +5,7 @@
 ![SQLite](https://img.shields.io/badge/SQLite-Local-green)
 ![Build](https://img.shields.io/badge/PyInstaller-Executable-purple)
 
-![demo](https://github.com/user-attachments/assets/1724c0e7-13ee-4ce4-819e-24f6d96c73b9)
+![demo1](https://github.com/user-attachments/assets/2575abcc-ef04-4313-8046-15e08c40c8f9)
 
 This app serves as a technical showcase of applied cryptography, focusing on zero-knowledge architecture where secrets are encrypted before they ever touch the database.
 
