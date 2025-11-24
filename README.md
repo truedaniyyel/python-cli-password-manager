@@ -9,9 +9,6 @@ This app serves as a technical showcase of applied cryptography, focusing on zer
 
 > **Note:** This is a portfolio project demonstrating security concepts.
 
-## Known Issues / Future Improvements
-* **CKEditor 4 Warning:** This project uses `Flask-CKEditor`, which relies on the End-of-Life CKEditor 4. In a production environment, I would migrate this to a modern frontend framework (React/Vue) with CKEditor 5 or utilize a Markdown editor like `SimpleMDE` to ensure long-term security compliance.
-
 ## Key Features
 
 * **Zero-Knowledge Encryption:** Uses `AES-256-GCM` to ensure data integrity. The database only ever stores encrypted blobs.
