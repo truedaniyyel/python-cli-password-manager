@@ -13,9 +13,9 @@ except ImportError:
     sys.exit(1)
 
 try:
-    from security import SecurityManager
-    from storage import StorageManager
-    from views import VaultView
+    from .security import SecurityManager
+    from .storage import StorageManager
+    from .views import VaultView
 except ImportError as e:
     print(f"[!] Error: {e}")
     sys.exit(1)

@@ -81,7 +81,7 @@ class TestStorage(unittest.TestCase):
         self.db_path = Path(self.test_dir) / "vault.db"
 
         # Patch the DB_FILE in storage.py to point to our temp file
-        self.patcher = patch('storage.DB_FILE', self.db_path)
+        self.patcher = patch('app.storage.DB_FILE', self.db_path)
         self.patcher.start()
 
         # Initialize DB
